@@ -162,5 +162,51 @@
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+}
+
+@utility eyebrow {
+  font-size: 0.7rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+@utility surface-card {
+  background-color: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-soft);
+}
+
+@utility gold-rule {
+  height: 1px;
+  width: 4rem;
+  background-image: var(--gradient-gold);
+}
+
+@utility hero-scrim {
+  background-image: var(--gradient-hero);
+}
+
+@utility lift {
+  transition:
+    transform 0.4s cubic-bezier(0.2, 0.7, 0.3, 1),
+    box-shadow 0.4s cubic-bezier(0.2, 0.7, 0.3, 1);
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lift);
   }
 }
