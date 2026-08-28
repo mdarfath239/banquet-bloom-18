@@ -10,33 +10,60 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as VenuesRouteImport } from './routes/venues'
+import { Route as VenuesIndexRouteImport } from './routes/venues.index'
+import { Route as VenuesSlugRouteImport } from './routes/venues.$slug'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const VenuesRoute = VenuesRouteImport.update({
+  id: '/venues',
+  path: '/venues',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VenuesIndexRoute = VenuesIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => VenuesRoute,
+} as any)
+const VenuesSlugRoute = VenuesSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => VenuesRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/venues': typeof VenuesRouteWithChildren
+  '/venues/$slug': typeof VenuesSlugRoute
+  '/venues/': typeof VenuesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/venues/$slug': typeof VenuesSlugRoute
+  '/venues': typeof VenuesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/venues': typeof VenuesRouteWithChildren
+  '/venues/$slug': typeof VenuesSlugRoute
+  '/venues/': typeof VenuesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/venues' | '/venues/$slug' | '/venues/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/venues/$slug' | '/venues'
+  id: '__root__' | '/' | '/venues' | '/venues/$slug' | '/venues/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  VenuesRoute: typeof VenuesRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +75,46 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/venues': {
+      id: '/venues'
+      path: '/venues'
+      fullPath: '/venues'
+      preLoaderRoute: typeof VenuesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/venues/': {
+      id: '/venues/'
+      path: '/'
+      fullPath: '/venues/'
+      preLoaderRoute: typeof VenuesIndexRouteImport
+      parentRoute: typeof VenuesRoute
+    }
+    '/venues/$slug': {
+      id: '/venues/$slug'
+      path: '/$slug'
+      fullPath: '/venues/$slug'
+      preLoaderRoute: typeof VenuesSlugRouteImport
+      parentRoute: typeof VenuesRoute
+    }
   }
 }
 
+interface VenuesRouteChildren {
+  VenuesSlugRoute: typeof VenuesSlugRoute
+  VenuesIndexRoute: typeof VenuesIndexRoute
+}
+
+const VenuesRouteChildren: VenuesRouteChildren = {
+  VenuesSlugRoute: VenuesSlugRoute,
+  VenuesIndexRoute: VenuesIndexRoute,
+}
+
+const VenuesRouteWithChildren =
+  VenuesRoute._addFileChildren(VenuesRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  VenuesRoute: VenuesRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
